@@ -1,0 +1,781 @@
+{
+  "version": "1.0",
+  "generator": "sld_interpreter",
+  "voltage_levels": [
+    "220kV"
+  ],
+  "components": [
+    {
+      "id": "bus_0",
+      "component_type": "busbar",
+      "label": "BUS-1",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 400.0,
+        "y": 320.0
+      },
+      "bbox": {
+        "x_min": 340.0,
+        "y_min": 314.0,
+        "x_max": 460.0,
+        "y_max": 326.0
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "bus_1",
+      "component_type": "busbar",
+      "label": "BUS-2",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 800.0,
+        "y": 400.0
+      },
+      "bbox": {
+        "x_min": 740.0,
+        "y_min": 394.0,
+        "x_max": 860.0,
+        "y_max": 406.0
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "comp_e55eb1",
+      "component_type": "feeder_terminal",
+      "label": "F1",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 600.0,
+        "y": 160.0
+      },
+      "bbox": {
+        "x_min": 585.0,
+        "y_min": 145.0,
+        "x_max": 615.0,
+        "y_max": 175.0
+      },
+      "confidence": 0.889
+    },
+    {
+      "id": "comp_882d37",
+      "component_type": "transformer_2w",
+      "label": "T1",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 240.0,
+        "y": 560.0
+      },
+      "bbox": {
+        "x_min": 225.0,
+        "y_min": 545.0,
+        "x_max": 255.0,
+        "y_max": 575.0
+      },
+      "confidence": 0.851
+    },
+    {
+      "id": "comp_0bbd00",
+      "component_type": "voltage_transformer",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 320.0,
+        "y": 720.0
+      },
+      "bbox": {
+        "x_min": 305.0,
+        "y_min": 705.0,
+        "x_max": 335.0,
+        "y_max": 735.0
+      },
+      "confidence": 0.855
+    },
+    {
+      "id": "comp_95895d",
+      "component_type": "surge_arrester",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 200.0,
+        "y": 200.0
+      },
+      "bbox": {
+        "x_min": 185.0,
+        "y_min": 185.0,
+        "x_max": 215.0,
+        "y_max": 215.0
+      },
+      "confidence": 0.885
+    },
+    {
+      "id": "comp_afa399",
+      "component_type": "load_break_switch",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 960.0,
+        "y": 120.0
+      },
+      "bbox": {
+        "x_min": 945.0,
+        "y_min": 105.0,
+        "x_max": 975.0,
+        "y_max": 135.0
+      },
+      "confidence": 0.93
+    },
+    {
+      "id": "comp_be0372",
+      "component_type": "disconnect_switch",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 200.0,
+        "y": 80.0
+      },
+      "bbox": {
+        "x_min": 185.0,
+        "y_min": 65.0,
+        "x_max": 215.0,
+        "y_max": 95.0
+      },
+      "confidence": 0.872
+    },
+    {
+      "id": "comp_67c0c2",
+      "component_type": "voltage_transformer",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 280.0,
+        "y": 480.0
+      },
+      "bbox": {
+        "x_min": 265.0,
+        "y_min": 465.0,
+        "x_max": 295.0,
+        "y_max": 495.0
+      },
+      "confidence": 0.862
+    },
+    {
+      "id": "comp_18523f",
+      "component_type": "transformer_3w",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 880.0,
+        "y": 600.0
+      },
+      "bbox": {
+        "x_min": 865.0,
+        "y_min": 585.0,
+        "x_max": 895.0,
+        "y_max": 615.0
+      },
+      "confidence": 0.936
+    },
+    {
+      "id": "comp_1470ca",
+      "component_type": "generator",
+      "label": "G1",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 600.0,
+        "y": 680.0
+      },
+      "bbox": {
+        "x_min": 585.0,
+        "y_min": 665.0,
+        "x_max": 615.0,
+        "y_max": 695.0
+      },
+      "confidence": 0.936
+    },
+    {
+      "id": "comp_9b62eb",
+      "component_type": "feeder_terminal",
+      "label": "F2",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 840.0,
+        "y": 280.0
+      },
+      "bbox": {
+        "x_min": 825.0,
+        "y_min": 265.0,
+        "x_max": 855.0,
+        "y_max": 295.0
+      },
+      "confidence": 0.896
+    },
+    {
+      "id": "comp_476989",
+      "component_type": "fuse",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 120.0,
+        "y": 320.0
+      },
+      "bbox": {
+        "x_min": 105.0,
+        "y_min": 305.0,
+        "x_max": 135.0,
+        "y_max": 335.0
+      },
+      "confidence": 0.915
+    },
+    {
+      "id": "comp_2d13bd",
+      "component_type": "surge_arrester",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 960.0,
+        "y": 280.0
+      },
+      "bbox": {
+        "x_min": 945.0,
+        "y_min": 265.0,
+        "x_max": 975.0,
+        "y_max": 295.0
+      },
+      "confidence": 0.904
+    },
+    {
+      "id": "comp_142a54",
+      "component_type": "generator",
+      "label": "G2",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 840.0,
+        "y": 200.0
+      },
+      "bbox": {
+        "x_min": 825.0,
+        "y_min": 185.0,
+        "x_max": 855.0,
+        "y_max": 215.0
+      },
+      "confidence": 0.926
+    },
+    {
+      "id": "comp_11e865",
+      "component_type": "ground",
+      "label": "GND",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 240.0,
+        "y": 640.0
+      },
+      "bbox": {
+        "x_min": 225.0,
+        "y_min": 625.0,
+        "x_max": 255.0,
+        "y_max": 655.0
+      },
+      "confidence": 0.9
+    },
+    {
+      "id": "comp_90f143",
+      "component_type": "ground",
+      "label": "GND",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 120.0,
+        "y": 680.0
+      },
+      "bbox": {
+        "x_min": 105.0,
+        "y_min": 665.0,
+        "x_max": 135.0,
+        "y_max": 695.0
+      },
+      "confidence": 0.962
+    },
+    {
+      "id": "comp_bf1798",
+      "component_type": "fuse",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 680.0,
+        "y": 240.0
+      },
+      "bbox": {
+        "x_min": 665.0,
+        "y_min": 225.0,
+        "x_max": 695.0,
+        "y_max": 255.0
+      },
+      "confidence": 0.874
+    },
+    {
+      "id": "comp_1aeb9b",
+      "component_type": "surge_arrester",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 640.0,
+        "y": 120.0
+      },
+      "bbox": {
+        "x_min": 625.0,
+        "y_min": 105.0,
+        "x_max": 655.0,
+        "y_max": 135.0
+      },
+      "confidence": 0.902
+    },
+    {
+      "id": "comp_92a90b",
+      "component_type": "generator",
+      "label": "G2",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 280.0,
+        "y": 80.0
+      },
+      "bbox": {
+        "x_min": 265.0,
+        "y_min": 65.0,
+        "x_max": 295.0,
+        "y_max": 95.0
+      },
+      "confidence": 0.931
+    },
+    {
+      "id": "comp_3e3285",
+      "component_type": "surge_arrester",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 840.0,
+        "y": 680.0
+      },
+      "bbox": {
+        "x_min": 825.0,
+        "y_min": 665.0,
+        "x_max": 855.0,
+        "y_max": 695.0
+      },
+      "confidence": 0.886
+    },
+    {
+      "id": "comp_c447fb",
+      "component_type": "feeder_terminal",
+      "label": "F3",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 480.0,
+        "y": 320.0
+      },
+      "bbox": {
+        "x_min": 465.0,
+        "y_min": 305.0,
+        "x_max": 495.0,
+        "y_max": 335.0
+      },
+      "confidence": 0.976
+    },
+    {
+      "id": "comp_bc3097",
+      "component_type": "fuse",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 560.0,
+        "y": 560.0
+      },
+      "bbox": {
+        "x_min": 545.0,
+        "y_min": 545.0,
+        "x_max": 575.0,
+        "y_max": 575.0
+      },
+      "confidence": 0.854
+    },
+    {
+      "id": "comp_b29874",
+      "component_type": "transformer_2w",
+      "label": "T3",
+      "voltage_level": "220kV",
+      "position": {
+        "x": 280.0,
+        "y": 240.0
+      },
+      "bbox": {
+        "x_min": 265.0,
+        "y_min": 225.0,
+        "x_max": 295.0,
+        "y_max": 255.0
+      },
+      "confidence": 0.929
+    },
+    {
+      "id": "comp_1642e0",
+      "component_type": "transformer_3w",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 400.0,
+        "y": 160.0
+      },
+      "bbox": {
+        "x_min": 385.0,
+        "y_min": 145.0,
+        "x_max": 415.0,
+        "y_max": 175.0
+      },
+      "confidence": 0.936
+    },
+    {
+      "id": "comp_4b0d76",
+      "component_type": "fuse",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 1000.0,
+        "y": 720.0
+      },
+      "bbox": {
+        "x_min": 985.0,
+        "y_min": 705.0,
+        "x_max": 1015.0,
+        "y_max": 735.0
+      },
+      "confidence": 0.958
+    },
+    {
+      "id": "comp_1c413c",
+      "component_type": "capacitor",
+      "label": null,
+      "voltage_level": "220kV",
+      "position": {
+        "x": 920.0,
+        "y": 240.0
+      },
+      "bbox": {
+        "x_min": 905.0,
+        "y_min": 225.0,
+        "x_max": 935.0,
+        "y_max": 255.0
+      },
+      "confidence": 0.942
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_232e26",
+      "from_component": "comp_e55eb1",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 600.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_a97929",
+      "from_component": "comp_882d37",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 240.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_3da456",
+      "from_component": "comp_0bbd00",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 320.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_22c9db",
+      "from_component": "comp_95895d",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 200.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_4e35c0",
+      "from_component": "comp_afa399",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 960.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_c8cf18",
+      "from_component": "comp_be0372",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 200.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_836bf3",
+      "from_component": "comp_67c0c2",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 280.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_92bff5",
+      "from_component": "comp_18523f",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 880.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_3f0c7d",
+      "from_component": "comp_1470ca",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 600.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_cd0d3f",
+      "from_component": "comp_9b62eb",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 840.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_e428ab",
+      "from_component": "comp_476989",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 120.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_5dd362",
+      "from_component": "comp_2d13bd",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 960.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_6f4031",
+      "from_component": "comp_142a54",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 840.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_7f1a09",
+      "from_component": "comp_11e865",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 240.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_0cc898",
+      "from_component": "comp_90f143",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 120.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_5bb0ff",
+      "from_component": "comp_bf1798",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 680.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_cf7144",
+      "from_component": "comp_1aeb9b",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 640.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_a55cdb",
+      "from_component": "comp_92a90b",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 280.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_027eea",
+      "from_component": "comp_3e3285",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 840.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_9ab395",
+      "from_component": "comp_c447fb",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 480.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_8b6ecc",
+      "from_component": "comp_bc3097",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 560.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_e26fa3",
+      "from_component": "comp_b29874",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 280.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_493b63",
+      "from_component": "comp_1642e0",
+      "to_component": "bus_0",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 400.0,
+          "y": 360.0
+        }
+      ]
+    },
+    {
+      "id": "conn_0525b4",
+      "from_component": "comp_4b0d76",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 1000.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_3be634",
+      "from_component": "comp_1c413c",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": [
+        {
+          "x": 920.0,
+          "y": 400.0
+        }
+      ]
+    },
+    {
+      "id": "conn_0af89f",
+      "from_component": "bus_0",
+      "to_component": "bus_1",
+      "connection_type": "ac_line",
+      "intermediate_points": []
+    }
+  ],
+  "metadata": {
+    "seed": 45,
+    "n_components": 25
+  }
+}
