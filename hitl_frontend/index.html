@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLD Review - HITL Interface</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #0f1117; color: #e2e8f0; height: 100vh; display: flex; flex-direction: column; }
+header { padding: 12px 20px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 16px; }
+header h1 { font-size: 16px; font-weight: 600; color: #f8fafc; }
+.status-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: #1e40af; color: #dbeafe; }
+.status-badge.warning { background: #92400e; color: #fef3c7; }
+.status-badge.error { background: #7f1d1d; color: #fee2e2; }
+
+.layout { display: flex; flex: 1; overflow: hidden; }
+.panel { padding: 16px; overflow-y: auto; }
+.left-panel { width: 280px; background: #1e293b; border-right: 1px solid #334155; }
+.right-panel { flex: 1; display: flex; flex-direction: column; }
+.canvas-area { flex: 1; background: #0f1117; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.canvas-area canvas { max-width: 100%; max-height: 100%; border: 1px solid #334155; }
+.canvas-bg { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 19px, #1e293b 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, #1e293b 20px); pointer-events: none; }
+
+.component-list { display: flex; flex-direction: column; gap: 6px; }
+.component-item { padding: 8px 10px; background: #0f1117; border-radius: 6px; border: 1px solid #334155; cursor: pointer; transition: all 0.15s; }
+.component-item:hover { border-color: #3b82f6; background: #1e293b; }
+.component-item.selected { border-color: #3b82f6; background: #1e3a5f; }
+.component-item .label { font-size: 12px; font-weight: 500; color: #f8fafc; }
+.component-item .type { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.component-item .voltage { font-size: 11px; color: #3b82f6; }
+
+.issue-item { padding: 8px 10px; background: #0f1117; border-radius: 6px; border-left: 3px solid; margin-bottom: 6px; }
+.issue-item.critical { border-color: #ef4444; }
+.issue-item.warning { border-color: #f59e0b; }
+.issue-item .issue-msg { font-size: 12px; color: #f8fafc; }
+.issue-item .issue-severity { font-size: 10px; text-transform: uppercase; margin-top: 2px; }
+
+.toolbar { display: flex; gap: 8px; padding: 10px 16px; background: #1e293b; border-top: 1px solid #334155; }
+.toolbar button { padding: 6px 14px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #e2e8f0; font-size: 12px; cursor: pointer; }
+.toolbar button:hover { background: #1e293b; border-color: #3b82f6; }
+.toolbar button.primary { background: #1d4ed8; border-color: #3b82f6; }
+.toolbar button.primary:hover { background: #1e40af; }
+
+.section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 12px 0 6px 0; }
+.info-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; color: #94a3b8; }
+.info-row span:last-child { color: #e2e8f0; font-weight: 500; }
+
+#drop-zone { border: 2px dashed #334155; border-radius: 8px; padding: 40px; text-align: center; color: #64748b; margin-bottom: 12px; }
+#drop-zone.dragover { border-color: #3b82f6; background: #1e3a5f; }
+</style>
+</head>
+<body>
+<header>
+  <h1>SLD Review</h1>
+  <span class="status-badge" id="status-badge">Awaiting Upload</span>
+  <span style="margin-left: auto; font-size: 12px; color: #64748b;" id="filename">—</span>
+</header>
+<div class="layout">
+  <div class="left-panel panel">
+    <div id="drop-zone">Drop SLD image / PDF</div>
+    <div id="summary" style="display:none">
+      <div class="section-title">Summary</div>
+      <div class="info-row"><span>Components</span><span id="stat-components">0</span></div>
+      <div class="info-row"><span>Connections</span><span id="stat-connections">0</span></div>
+      <div class="info-row"><span>Voltage Levels</span><span id="stat-voltages">—</span></div>
+      <div class="info-row"><span>Processing</span><span id="stat-time">—</span></div>
+    </div>
+
+    <div class="section-title">Components</div>
+    <div class="component-list" id="component-list"></div>
+
+    <div class="section-title">Validation Issues</div>
+    <div id="issues-list"></div>
+  </div>
+  <div class="right-panel">
+    <div class="canvas-area">
+      <div class="canvas-bg"></div>
+      <canvas id="sld-canvas" width="1200" height="800"></canvas>
+    </div>
+    <div class="toolbar">
+      <button onclick="api.zoomIn()">Zoom In</button>
+      <button onclick="api.zoomOut()">Zoom Out</button>
+      <button onclick="api.resetView()">Reset</button>
+      <div style="flex:1"></div>
+      <button onclick="api.exportJSON()">Export JSON</button>
+      <button onclick="api.exportCSV()">Export CSV</button>
+      <button class="primary" onclick="api.approve()">Approve & Finalize</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const state = { data: null, zoom: 1, offset: {x:0,y:0}, dragging: null, selected: null };
+
+const symbolColors = {
+  transformer_2w: '#f59e0b', transformer_3w: '#f97316', busbar: '#3b82f6',
+  circuit_breaker: '#22c55e', disconnect_switch: '#06b6d4', load_break_switch: '#8b5cf6',
+  current_transformer: '#ec4899', voltage_transformer: '#d946ef',
+  reactor: '#84cc16', capacitor: '#a3e635', generator: '#ef4444',
+  feeder_terminal: '#64748b', ground: '#6b7280', surge_arrester: '#f43f5e',
+  fuse: '#a855f7', unknown: '#475569'
+};
+
+const api = {
+  zoomIn: () => { state.zoom = Math.min(state.zoom * 1.2, 5); this.render(); },
+  zoomOut: () => { state.zoom = Math.max(state.zoom / 1.2, 0.2); this.render(); },
+  resetView: () => { state.zoom = 1; state.offset = {x:0,y:0}; this.render(); },
+  exportJSON: () => {
+    if (!state.data) return;
+    const blob = new Blob([JSON.stringify(state.data, null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'sld_output.json'; a.click();
+  },
+  exportCSV: () => {
+    if (!state.data) return;
+    let csv = 'id,component_type,label,voltage_level,x,y\n';
+    for (const c of state.data.components) {
+      csv += `${c.id},${c.component_type},${c.label},${c.voltage_level},${c.position?.x},${c.position?.y}\n`;
+    }
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'sld_components.csv'; a.click();
+  },
+  approve: () => {
+    if (!state.data) return;
+    state.data.metadata = state.data.metadata || {};
+    state.data.metadata.status = 'approved';
+    state.data.metadata.approved_at = new Date().toISOString();
+    const blob = new Blob([JSON.stringify(state.data, null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'sld_approved.json'; a.click();
+    document.getElementById('status-badge').textContent = 'Approved';
+    document.getElementById('status-badge').className = 'status-badge';
+  },
+  render: () => {
+    const canvas = document.getElementById('sld-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(state.offset.x, state.offset.y);
+    ctx.scale(state.zoom, state.zoom);
+    if (!state.data) { ctx.restore(); return; }
+
+    // Draw connections
+    ctx.strokeStyle = '#475569'; ctx.lineWidth = 2;
+    for (const conn of state.data.connections) {
+      const from = state.data.components.find(c => c.id === conn.from_id);
+      const to = state.data.components.find(c => c.id === conn.to_id);
+      if (from?.position && to?.position) {
+        ctx.beginPath();
+        ctx.moveTo(from.position.x, from.position.y);
+        ctx.lineTo(to.position.x, to.position.y);
+        ctx.stroke();
+      }
+    }
+
+    // Draw components
+    for (const comp of state.data.components) {
+      if (!comp.position) continue;
+      const color = symbolColors[comp.component_type] || symbolColors.unknown;
+      const sel = state.selected === comp.id;
+      ctx.strokeStyle = sel ? '#fff' : color;
+      ctx.lineWidth = sel ? 2.5 : 1.5;
+      ctx.fillStyle = color + '33';
+      if (comp.component_type === 'busbar') {
+        ctx.fillRect(comp.position.x - 30, comp.position.y - 5, 60, 10);
+        ctx.strokeRect(comp.position.x - 30, comp.position.y - 5, 60, 10);
+      } else if (comp.component_type.startsWith('transformer')) {
+        ctx.beginPath(); ctx.arc(comp.position.x, comp.position.y, 12, 0, Math.PI*2);
+        ctx.fill(); ctx.stroke();
+      } else if (comp.component_type === 'circuit_breaker') {
+        ctx.strokeRect(comp.position.x - 10, comp.position.y - 10, 20, 20);
+        ctx.fill(); ctx.fillRect(comp.position.x - 10, comp.position.y - 10, 20, 20);
+      } else {
+        ctx.beginPath(); ctx.arc(comp.position.x, comp.position.y, 8, 0, Math.PI*2);
+        ctx.fill(); ctx.stroke();
+      }
+
+      // Label
+      if (comp.label) {
+        ctx.fillStyle = '#e2e8f0'; ctx.font = '9px system-ui';
+        ctx.fillText(comp.label, comp.position.x + 12, comp.position.y - 6);
+      }
+      if (comp.voltage_level) {
+        ctx.fillStyle = '#3b82f6'; ctx.font = '8px system-ui';
+        ctx.fillText(comp.voltage_level, comp.position.x + 12, comp.position.y + 4);
+      }
+    }
+    ctx.restore();
+  }
+};
+
+// File upload via drag-drop
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', async e => {
+  e.preventDefault(); dz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  document.getElementById('status-badge').textContent = 'Processing…';
+  document.getElementById('status-badge').className = 'status-badge';
+  document.getElementById('filename').textContent = file.name;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const res = await fetch('/interpret', { method: 'POST', body: formData });
+    state.data = await res.json();
+    updateUI();
+    document.getElementById('status-badge').textContent = 'Ready for Review';
+  } catch(err) {
+    document.getElementById('status-badge').textContent = 'Error';
+    document.getElementById('status-badge').className = 'status-badge error';
+  }
+});
+
+function updateUI() {
+  if (!state.data) return;
+  document.getElementById('summary').style.display = 'block';
+  document.getElementById('stat-components').textContent = state.data.components?.length || 0;
+  document.getElementById('stat-connections').textContent = state.data.connections?.length || 0;
+  document.getElementById('stat-voltages').textContent = (state.data.voltage_levels || []).join(', ');
+  document.getElementById('stat-time').textContent = state.data.metadata?.processing_time_ms ? `${state.data.metadata.processing_time_ms}ms` : '—';
+
+  // Components list
+  const cl = document.getElementById('component-list');
+  cl.innerHTML = '';
+  for (const c of (state.data.components || [])) {
+    const div = document.createElement('div');
+    div.className = 'component-item' + (state.selected === c.id ? ' selected' : '');
+    div.innerHTML = `<div class="label">${c.label || c.id.slice(0,8)}</div><div class="type">${c.component_type}</div><div class="voltage">${c.voltage_level || '—'}</div>`;
+    div.onclick = () => { state.selected = c.id; api.render(); };
+    cl.appendChild(div);
+  }
+
+  // Issues
+  const il = document.getElementById('issues-list');
+  il.innerHTML = '';
+  for (const iss of (state.data.validation?.issues || [])) {
+    const div = document.createElement('div');
+    div.className = `issue-item ${iss.severity === 'critical' ? 'critical' : 'warning'}`;
+    div.innerHTML = `<div class="issue-msg">${iss.message}</div><div class="issue-severity" style="color:${iss.severity==='critical'?'#ef4444':'#f59e0b'}">${iss.severity}</div>`;
+    il.appendChild(div);
+  }
+
+  const badge = document.getElementById('status-badge');
+  const issues = state.data.validation?.issues || [];
+  const critical = issues.filter(i => i.severity === 'critical').length;
+  if (critical > 0) { badge.textContent = `${critical} Critical Issue${critical>1?'s':''}`; badge.className = 'status-badge error'; }
+  else if (issues.length) { badge.textContent = `${issues.length} Warning${issues.length>1?'s':''}`; badge.className = 'status-badge warning'; }
+  else { badge.textContent = 'Validated ✓'; badge.className = 'status-badge'; }
+
+  api.render();
+}
+
+// Mouse pan/zoom
+const canvas = document.getElementById('sld-canvas');
+let mouseDown = false, lastX = 0, lastY = 0;
+canvas.addEventListener('mousedown', e => { mouseDown = true; lastX = e.clientX; lastY = e.clientY; canvas.style.cursor = 'grabbing'; });
+canvas.addEventListener('mouseup', () => { mouseDown = false; canvas.style.cursor = 'crosshair'; });
+canvas.addEventListener('mousemove', e => {
+  if (!mouseDown) return;
+  state.offset.x += e.clientX - lastX;
+  state.offset.y += e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  api.render();
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const z = e.deltaY > 0 ? 0.9 : 1.1;
+  state.zoom = Math.max(0.2, Math.min(5, state.zoom * z));
+  api.render();
+});
+canvas.style.cursor = 'crosshair';
+api.render();
+</script>
+</body>
+</html>
