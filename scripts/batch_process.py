@@ -56,10 +56,14 @@ def run_batch(image_dir: str, model: str = "llava", output_dir: str = None):
         from extract_llava import extract_with_llava
         extractor = extract_with_llava
     elif model.lower() == "gemini":
-        from extract import extract_with_gemini
-        extractor = extract_with_gemini
+        try:
+            from extract import extract_with_gemini
+            extractor = extract_with_gemini
+        except (ImportError, Exception) as e:
+            print(f"❌ Gemini extraction not available: {e}")
+            return
     else:
-        print(f"❌ Unknown model: {model}")
+        print(f"❌ Unknown model: {model}. Use 'llava' or 'gemini'")
         return
     
     # Process each image
