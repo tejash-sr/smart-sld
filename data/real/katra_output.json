@@ -1,0 +1,142 @@
+{
+  "sources": [
+    {
+      "id": "S1",
+      "name": "132KV Fatuha Incomer",
+      "voltage": "132kV"
+    },
+    {
+      "id": "S2",
+      "name": "132KV Gaighat",
+      "voltage": "132kV"
+    }
+  ],
+  "transformers": [
+    {
+      "id": "T1",
+      "name": "ICT-1",
+      "rating": "50MVA",
+      "hv_side": "132kV",
+      "lv_side": "33kV"
+    },
+    {
+      "id": "T2",
+      "name": "ICT-2",
+      "rating": "50MVA",
+      "hv_side": "132kV",
+      "lv_side": "33kV"
+    }
+  ],
+  "feeders": [
+    {
+      "id": "F1",
+      "name": "Pahari",
+      "voltage": "33kV"
+    },
+    {
+      "id": "F2",
+      "name": "Sabalpur",
+      "voltage": "33kV"
+    },
+    {
+      "id": "F3",
+      "name": "Idle",
+      "voltage": "33kV"
+    },
+    {
+      "id": "F4",
+      "name": "Ashoknagar",
+      "voltage": "33kV"
+    },
+    {
+      "id": "F5",
+      "name": "Kankarbagh",
+      "voltage": "33kV"
+    },
+    {
+      "id": "F6",
+      "name": "Karmali Chak",
+      "voltage": "33kV"
+    }
+  ],
+  "buses": [
+    {
+      "id": "B1",
+      "name": "132KV Main Bus",
+      "voltage_level": "132kV"
+    },
+    {
+      "id": "B2",
+      "name": "132KV Transfer Bus",
+      "voltage_level": "132kV"
+    },
+    {
+      "id": "B3",
+      "name": "33KV Main Bus",
+      "voltage_level": "33kV"
+    },
+    {
+      "id": "B4",
+      "name": "33KV Transfer Bus",
+      "voltage_level": "33kV"
+    }
+  ],
+  "connections": [
+    {
+      "from": "S1",
+      "to": "B1"
+    },
+    {
+      "from": "S2",
+      "to": "B1"
+    },
+    {
+      "from": "B1",
+      "to": "T1"
+    },
+    {
+      "from": "B1",
+      "to": "T2"
+    },
+    {
+      "from": "B2",
+      "to": "T1"
+    },
+    {
+      "from": "B2",
+      "to": "T2"
+    },
+    {
+      "from": "T1",
+      "to": "B3"
+    },
+    {
+      "from": "T2",
+      "to": "B4"
+    },
+    {
+      "from": "B3",
+      "to": "F1"
+    },
+    {
+      "from": "B3",
+      "to": "F2"
+    },
+    {
+      "from": "B3",
+      "to": "F3"
+    },
+    {
+      "from": "B4",
+      "to": "F4"
+    },
+    {
+      "from": "B4",
+      "to": "F5"
+    },
+    {
+      "from": "B4",
+      "to": "F6"
+    }
+  ]
+}

@@ -18,3 +18,10 @@ ENV/
 *~
 .tmp/
 tmp/
+
+# Environment variables - NEVER commit actual secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
