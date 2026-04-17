@@ -1,0 +1,22 @@
+{
+  "batch_timestamp": "2026-04-16T20:20:05.303459",
+  "model": "llava",
+  "total_images": 2,
+  "extractions": [
+    {
+      "image": "katra.jpg",
+      "status": "failed",
+      "error": "model requires more system memory (4.3 GiB) than is available (3.0 GiB) (status code: 500)"
+    },
+    {
+      "image": "katra_graph.png",
+      "status": "failed",
+      "error": "model requires more system memory (4.3 GiB) than is available (3.0 GiB) (status code: 500)"
+    }
+  ],
+  "summary": {
+    "successful": 0,
+    "failed": 2,
+    "total_processing_time": 0
+  }
+}
