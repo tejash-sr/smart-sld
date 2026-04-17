@@ -204,7 +204,7 @@ class SecurityAuditor:
                 if "operator_id" not in device or device.get("operator_id") is None:
                     vuln = VulnerabilityFinding(
                         vulnerability_id=f"NO_AUTH_{device_type.upper()}_{device.get('id', 'UNKNOWN')[:6]}",
-                        threat_level=ThreatLevel.HIGH,
+                        threat_level=ThreatLevel.CRITICAL,
                         component=device.get("id", "UNKNOWN"),
                         description=f"Device configuration changes not restricted to authorized operators",
                         remediation=f"Implement mandatory operator authentication for device '{device.get('id')}'",
@@ -266,6 +266,14 @@ class SecurityAuditor:
         self.threat_score = sum(f.cvss_score * 10 for f in self.findings) / max(1, len(self.findings))
         self.threat_score = min(100.0, self.threat_score)
 
+        # Convert findings to JSON-serializable format
+        findings_dicts = []
+        for f in sorted(self.findings, key=lambda x: x.cvss_score, reverse=True)[:5]:
+            f_dict = asdict(f)
+            f_dict['threat_level'] = f.threat_level.value
+            f_dict['compliance_impact'] = [fw.value for fw in f.compliance_impact]
+            findings_dicts.append(f_dict)
+
         report = {
             "report_timestamp": datetime.now().isoformat(),
             "overall_threat_score": f"{self.threat_score:.1f}/100",
@@ -274,7 +282,7 @@ class SecurityAuditor:
             "critical_findings": critical_count,
             "warning_findings": warning_count,
             "findings_by_framework": self._group_findings_by_framework(),
-            "top_5_risks": [asdict(f) for f in sorted(self.findings, key=lambda x: x.cvss_score, reverse=True)[:5]],
+            "top_5_risks": findings_dicts,
             "compliance_summary": {
                 "NERC_CIP": "COMPLIANT" if critical_count == 0 else "NON-COMPLIANT",
                 "IEC_62443": "COMPLIANT" if self.threat_score < 50 else "NON-COMPLIANT"
@@ -298,9 +306,20 @@ class SecurityAuditor:
     def save_security_report(self, filename: str = "security_audit_report.json") -> str:
         """Save security assessment to file"""
         report = self.generate_security_report()
+        
+        # Convert enums to strings for JSON serialization
+        def convert_enums(obj):
+            if isinstance(obj, dict):
+                return {k: convert_enums(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_enums(item) for item in obj]
+            elif isinstance(obj, Enum):
+                return obj.value
+            return obj
+        
         filepath = self.output_dir / filename
         with open(filepath, 'w') as f:
-            json.dump(report, f, indent=2)
+            json.dump(convert_enums(report), f, indent=2)
         logger.info(f"Security report saved to {filepath}")
         return str(filepath)
 
