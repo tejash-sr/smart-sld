@@ -163,6 +163,20 @@ class SCADACommandCenter:
 
     def generate_audit_trail(self) -> Dict:
         """Generate compliance audit trail for all SCADA commands"""
+        # Convert commands to JSON-serializable format
+        command_details = []
+        for c in self.command_history[-50:]:
+            cmd_dict = asdict(c)
+            # Convert timestamp if it's a datetime object
+            if isinstance(cmd_dict['timestamp'], datetime):
+                cmd_dict['timestamp'] = cmd_dict['timestamp'].isoformat()
+            # Convert all enums to strings
+            if hasattr(cmd_dict['command_type'], 'value'):
+                cmd_dict['command_type'] = cmd_dict['command_type'].value
+            if hasattr(cmd_dict['risk_level'], 'value'):
+                cmd_dict['risk_level'] = cmd_dict['risk_level'].value
+            command_details.append(cmd_dict)
+        
         audit_report = {
             "audit_timestamp": datetime.now().isoformat(),
             "total_commands": len(self.command_history),
@@ -176,7 +190,7 @@ class SCADACommandCenter:
                 "CRITICAL": len([c for c in self.command_history if c.risk_level == RiskLevel.CRITICAL]),
             },
             "commands_by_type": self._group_commands_by_type(),
-            "command_details": [asdict(c) for c in self.command_history[-50:]],  # Last 50
+            "command_details": command_details,
         }
         return audit_report
 
