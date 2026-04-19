@@ -1,0 +1,6 @@
+path: E:\PROJECTS\Smart Electrical SLD Intelligence\data\training
+train: images
+val: images
+
+nc: 14
+names: ['circuit_breaker', 'disconnect_switch', 'transformer_2w', 'busbar', 'current_transformer', 'voltage_transformer', 'reactor', 'capacitor', 'generator', 'feeder_terminal', 'ground', 'surge_arrester', 'fuse', 'load_break_switch']

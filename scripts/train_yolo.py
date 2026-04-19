@@ -1,3 +1,63 @@
+"""Train YOLO model on synthetic SLD images"""
+import sys
+from pathlib import Path
+import argparse
+
+def train_yolo(data_yaml_path, epochs=50, batch_size=16, patience=10):
+    """Train YOLO model using ultralytics"""
+    try:
+        from ultralytics import YOLO
+    except ImportError:
+        print("❌ ultralytics not found. Installing...")
+        import subprocess
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "ultralytics", "-q"])
+        from ultralytics import YOLO
+    
+    print("🚀 Starting YOLO training...")
+    
+    # Load YOLO model (nano = fast, small = better accuracy)
+    model = YOLO('yolov8n.pt')  # nano model for demo
+    
+    # Train
+    results = model.train(
+        data=str(data_yaml_path),
+        epochs=epochs,
+        imgsz=640,
+        batch=batch_size,
+        patience=patience,
+        device='cpu',  # Use CPU if no GPU available
+        save=True,
+        plots=True,
+        verbose=True,
+    )
+    
+    # Save model to standard location
+    model_path = Path(__file__).parent.parent / "models" / "sld_detector.pt"
+    model_path.parent.mkdir(exist_ok=True)
+    
+    print(f"\n✅ Training complete!")
+    print(f"📊 Best model: {model_path}")
+    print(f"📈 Results: {results.save_dir}")
+    
+    return model_path
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Train YOLO model on SLD images")
+    parser.add_argument("--data-yaml", default="data/training/data.yaml", help="Path to data.yaml")
+    parser.add_argument("--epochs", type=int, default=50, help="Number of epochs")
+    parser.add_argument("--batch", type=int, default=16, help="Batch size")
+    parser.add_argument("--patience", type=int, default=10, help="Early stopping patience")
+    
+    args = parser.parse_args()
+    
+    data_yaml = Path(args.data_yaml)
+    if not data_yaml.exists():
+        print(f"❌ data.yaml not found at {data_yaml}")
+        print("   First run: python scripts/generate_training_data.py")
+        sys.exit(1)
+    
+    train_yolo(data_yaml, epochs=args.epochs, batch_size=args.batch, patience=args.patience)
 #!/usr/bin/env python3
 """
 Train YOLO model for SLD symbol detection.

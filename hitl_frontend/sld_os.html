@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLD OS - Grid Intelligence Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00d9ff;
+            --secondary: #b400ff;
+            --accent: #00ff41;
+            --danger: #ff1744;
+            --warning: #ffb300;
+            --bg-dark: #0a0e27;
+            --bg-darker: #050a15;
+            --surface: rgba(20, 30, 60, 0.7);
+            --border: rgba(0, 217, 255, 0.2);
+            --text: #e0e7ff;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, #1a1f3a 100%);
+            color: var(--text);
+            overflow: hidden;
+            background-attachment: fixed;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr 320px;
+            grid-template-rows: 60px 1fr 80px;
+            height: 100vh;
+            gap: 8px;
+            padding: 8px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,217,255,0.03)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            background: linear-gradient(90deg, rgba(0, 217, 255, 0.1) 0%, rgba(180, 0, 255, 0.1) 100%);
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 8px rgba(0, 255, 65, 0); }
+        }
+
+        .left-panel {
+            grid-column: 1;
+            grid-row: 2;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-title {
+            font-size: 14px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 16px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text);
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        select,
+        button {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .canvas-container {
+            grid-column: 2;
+            grid-row: 2;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1f3a 100%);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .canvas-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(20, 30, 60, 0.9);
+            border: 1px solid var(--primary);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            backdrop-filter: blur(10px);
+        }
+
+        .right-panel {
+            grid-column: 3;
+            grid-row: 2;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            margin-bottom: 16px;
+        }
+
+        .section-header {
+            font-size: 12px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 6px;
+            padding: 6px;
+            background: rgba(0, 217, 255, 0.05);
+            border-left: 2px solid var(--primary);
+            border-radius: 2px;
+        }
+
+        .stat-value {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .anomaly-item {
+            font-size: 11px;
+            padding: 8px;
+            background: rgba(255, 23, 68, 0.1);
+            border-left: 3px solid var(--danger);
+            margin-bottom: 6px;
+            border-radius: 2px;
+        }
+
+        .chat-interface {
+            background: rgba(10, 14, 39, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .chat-message {
+            margin-bottom: 6px;
+            padding: 6px;
+            background: rgba(0, 217, 255, 0.1);
+            border-left: 2px solid var(--primary);
+            border-radius: 2px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 4px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .chat-input button {
+            width: auto;
+            padding: 8px 12px;
+            min-width: 40px;
+        }
+
+        .footer {
+            grid-column: 1 / -1;
+            grid-row: 3;
+            background: linear-gradient(90deg, rgba(0, 217, 255, 0.1) 0%, rgba(180, 0, 255, 0.1) 100%);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 40px;
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-label {
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .footer-value {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 217, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--secondary), var(--primary));
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 60px 1fr 1fr 1fr 80px;
+            }
+
+            .left-panel { grid-column: 1; grid-row: 2; }
+            .canvas-container { grid-column: 1; grid-row: 3; height: 300px; }
+            .right-panel { grid-column: 1; grid-row: 4; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ SLD OS - Grid Intelligence</h1>
+            <div class="status-indicator">
+                <div class="pulse"></div>
+                <span>System Active</span>
+            </div>
+        </div>
+
+        <div class="left-panel">
+            <div class="panel-title">📤 Upload & Classify</div>
+            
+            <div class="control-group">
+                <label>Single SLD</label>
+                <input type="file" id="sldFile" accept="image/*" />
+                <button onclick="interpretSLD()">🔍 Extract & Analyze</button>
+            </div>
+
+            <div class="control-group">
+                <label>Compare SLDs (Diff)</label>
+                <input type="file" id="oldSLD" accept="image/*" placeholder="Old SLD" />
+                <input type="file" id="newSLD" accept="image/*" placeholder="New SLD" />
+                <button onclick="compareSLDs()">🔄 Detect Changes</button>
+            </div>
+
+            <div class="panel-title" style="margin-top: 20px;">⚙️ Fault Simulator</div>
+            
+            <div class="control-group">
+                <label>Component ID</label>
+                <input type="text" id="faultLocation" placeholder="e.g., BUS-1" />
+            </div>
+
+            <div class="control-group">
+                <label>Isolation Strategy</label>
+                <select id="isolationStrategy">
+                    <option value="optimal">Optimal (Min Affected)</option>
+                    <option value="conservative">Conservative (Safe)</option>
+                    <option value="aggressive">Aggressive (Fast)</option>
+                </select>
+                <button onclick="analyzeFault()">⚡ Run Fault Analysis</button>
+            </div>
+
+            <div class="panel-title" style="margin-top: 20px;">🔄 Batch Operations</div>
+            <button onclick="triggerBatchIngest()" style="background: linear-gradient(135deg, var(--warning), var(--secondary));">
+                📦 Run Nightly Batch
+            </button>
+
+            <div class="panel-title" style="margin-top: 20px;">📊 Quick Queries</div>
+            <button onclick="queryBus3()">Bus-3 Connections?</button>
+            <button onclick="showAnomalies()">Show Anomalies</button>
+            <button onclick="showAuditLog()">View Audit Log</button>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="topologyCanvas"></canvas>
+            <div class="canvas-overlay">
+                <div id="canvasInfo">Ready for SLD upload</div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="section">
+                <div class="section-header">📈 Topology Statistics</div>
+                <div class="stat">
+                    <span>Total Components</span>
+                    <span class="stat-value" id="compCount">0</span>
+                </div>
+                <div class="stat">
+                    <span>Connections</span>
+                    <span class="stat-value" id="connCount">0</span>
+                </div>
+                <div class="stat">
+                    <span>Voltage Levels</span>
+                    <span class="stat-value" id="voltageCount">0</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">⚠️ Anomalies Detected</div>
+                <div id="anomaliesList" style="max-height: 100px; overflow-y: auto;">
+                    <div style="color: rgba(224, 231, 255, 0.5); font-size: 11px;">No anomalies detected</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">💬 Agent Chat</div>
+                <div class="chat-interface">
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input">
+                        <input type="text" id="chatInput" placeholder="Ask about grid..."  />
+                        <button onclick="sendChat()">→</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">📋 Latest Update</div>
+                <div id="latestUpdate" style="font-size: 10px; color: rgba(224, 231, 255, 0.7);">
+                    Waiting for operations...
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-item">
+                <span class="footer-label">Backend:</span>
+                <span class="footer-value" id="backendStatus">●</span>
+            </div>
+            <div class="footer-item">
+                <span class="footer-label">Neo4j Twin:</span>
+                <span class="footer-value" id="neoStatus">●</span>
+            </div>
+            <div class="footer-item">
+                <span class="footer-label">Fault Agent:</span>
+                <span class="footer-value" id="agentStatus">●</span>
+            </div>
+            <div class="footer-item">
+                <span class="footer-label">Last Sync:</span>
+                <span class="footer-value" id="lastSync">--:--</span>
+            </div>
+            <div class="footer-item" style="margin-left: auto;">
+                <span id="fpsCounter" style="color: var(--accent);">60 FPS</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:8000/api/v1";
+        let canvas = document.getElementById("topologyCanvas");
+        let ctx = canvas.getContext("2d");
+        let currentTopology = null;
+        let animationStart = Date.now();
+
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        async function interpretSLD() {
+            const file = document.getElementById("sldFile").files[0];
+            if (!file) return alert("Select an SLD image");
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch(`${API_BASE}/interpret`, { method: "POST", body: formData });
+                const data = await response.json();
+                currentTopology = data.data;
+                updateStats(data.data);
+                drawTopology(data.data);
+                addChatMessage(`✅ Extracted ${data.data.components.length} components`);
+                updateLatestUpdate(`Batch ${data.batch_id}: SLD interpreted`);
+            } catch (e) {
+                alert(`Error: ${e.message}`);
+            }
+        }
+
+        async function compareSLDs() {
+            const oldFile = document.getElementById("oldSLD").files[0];
+            const newFile = document.getElementById("newSLD").files[0];
+            if (!oldFile || !newFile) return alert("Select both SLDs");
+
+            const formData = new FormData();
+            formData.append("old_file", oldFile);
+            formData.append("new_file", newFile);
+
+            try {
+                const response = await fetch(`${API_BASE}/compare-sld`, { method: "POST", body: formData });
+                const diff = await response.json();
+                addChatMessage(`📊 Diff: +${diff.statistics.components_added} -${diff.statistics.components_removed} components`);
+                if (diff.critical_changes && diff.critical_changes.length > 0) {
+                    addChatMessage(`⚠️ CRITICAL: ${diff.critical_changes[0]}`);
+                }
+            } catch (e) {
+                alert(`Error: ${e.message}`);
+            }
+        }
+
+        async function analyzeFault() {
+            const fault = document.getElementById("faultLocation").value;
+            const strategy = document.getElementById("isolationStrategy").value;
+            if (!fault) return alert("Enter component ID");
+
+            try {
+                const response = await fetch(`${API_BASE}/fault-analysis`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ fault_location: fault, strategy: strategy })
+                });
+                const analysis = await response.json();
+                if (analysis.error) {
+                    addChatMessage(`❌ ${analysis.error}`);
+                    return;
+                }
+                addChatMessage(`⚡ Fault at ${fault}: ${analysis.propagation_trace.total_affected} affected`);
+                if (analysis.isolation_points.length > 0) {
+                    addChatMessage(`🔌 Isolate at: ${analysis.isolation_points[0].component_label}`);
+                }
+                addChatMessage(`⏱️  Restore in ~${analysis.restoration_estimate.estimated_time_minutes} min`);
+            } catch (e) {
+                alert(`Error: ${e.message}`);
+            }
+        }
+
+        async function triggerBatchIngest() {
+            try {
+                const response = await fetch(`${API_BASE}/batch-ingest`, { method: "POST" });
+                const batch = await response.json();
+                addChatMessage(`📦 Batch: ${batch.slds_processed} SLDs, ${batch.total_components} components`);
+            } catch (e) {
+                alert(`Error: ${e.message}`);
+            }
+        }
+
+        async function showAnomalies() {
+            try {
+                const response = await fetch(`${API_BASE}/anomalies`);
+                const result = await response.json();
+                const anomaliesList = document.getElementById("anomaliesList");
+                anomaliesList.innerHTML = "";
+                if (result.anomalies && result.anomalies.length > 0) {
+                    result.anomalies.slice(0, 5).forEach(anom => {
+                        const div = document.createElement("div");
+                        div.className = "anomaly-item";
+                        div.innerHTML = `<strong>${anom.type}</strong><br/>${anom.description}`;
+                        anomaliesList.appendChild(div);
+                    });
+                    addChatMessage(`⚠️  ${result.anomalies.length} anomalies`);
+                } else {
+                    anomaliesList.innerHTML = '<div style="color: var(--accent);">✅ No anomalies</div>';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function queryBus3() {
+            try {
+                const response = await fetch(`${API_BASE}/graph-query`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question: "What is connected to Bus-3?" })
+                });
+                const result = await response.json();
+                addChatMessage(`Bus-3 query: ${result.answer.components ? result.answer.components.length : 0} components`);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function showAuditLog() {
+            try {
+                const response = await fetch(`${API_BASE}/audit/recent?limit=5`);
+                const result = await response.json();
+                addChatMessage(`📋 Last 5 events`);
+                result.events.slice(0, 3).forEach(evt => {
+                    addChatMessage(`  • ${evt.event_type}: ${evt.action}`);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function updateStats(topology) {
+            document.getElementById("compCount").textContent = topology.components.length;
+            document.getElementById("connCount").textContent = topology.connections.length;
+            document.getElementById("voltageCount").textContent = topology.voltage_levels.length;
+        }
+
+        function drawTopology(topology) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            topology.connections.forEach(conn => {
+                const from = topology.components.find(c => c.id === conn.from_component);
+                const to = topology.components.find(c => c.id === conn.to_component);
+                if (from && to) drawConnection(from, to);
+            });
+            topology.components.forEach(comp => drawComponent(comp));
+            drawRealTimeAnimation();
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = "rgba(0, 217, 255, 0.05)";
+            ctx.lineWidth = 0.5;
+            const gridSize = 50;
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+
+        function drawConnection(from, to) {
+            const x1 = (from.position?.x || Math.random()) * canvas.width;
+            const y1 = (from.position?.y || Math.random()) * canvas.height;
+            const x2 = (to.position?.x || Math.random()) * canvas.width;
+            const y2 = (to.position?.y || Math.random()) * canvas.height;
+
+            ctx.strokeStyle = "rgba(0, 217, 255, 0.3)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+
+            const elapsed = (Date.now() - animationStart) % 3000;
+            const t = (elapsed / 3000) % 1;
+            const px = x1 + (x2 - x1) * t;
+            const py = y1 + (y2 - y1) * t;
+
+            ctx.fillStyle = `rgba(0, 255, 65, ${1 - t * 0.5})`;
+            ctx.beginPath();
+            ctx.arc(px, py, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawComponent(comp) {
+            const x = (comp.position?.x || Math.random()) * canvas.width;
+            const y = (comp.position?.y || Math.random()) * canvas.height;
+            const size = 12;
+
+            let color = "rgba(0, 217, 255, 0.8)";
+            if (comp.component_type?.includes("bus")) color = "rgba(255, 179, 0, 0.8)";
+            if (comp.component_type?.includes("feeder")) color = "rgba(0, 255, 65, 0.8)";
+            if (comp.component_type?.includes("transformer")) color = "rgba(180, 0, 255, 0.8)";
+
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, size + 4, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = "rgba(0, 217, 255, 0.8)";
+            ctx.font = "10px monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(comp.label.substring(0, 8), x, y + 20);
+        }
+
+        function drawRealTimeAnimation() {
+            const elapsed = Date.now() - animationStart;
+            const glow = Math.sin(elapsed / 1000) * 10 + 10;
+            ctx.strokeStyle = `rgba(0, 217, 255, ${(Math.sin(elapsed / 500) + 1) * 0.2})`;
+            ctx.lineWidth = glow;
+            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+        }
+
+        function addChatMessage(msg) {
+            const chatMessages = document.getElementById("chatMessages");
+            const div = document.createElement("div");
+            div.className = "chat-message";
+            div.textContent = msg;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendChat() {
+            const input = document.getElementById("chatInput");
+            const msg = input.value.trim();
+            if (!msg) return;
+            addChatMessage(`You: ${msg}`);
+            input.value = "";
+            setTimeout(() => {
+                addChatMessage(`Agent: Processing query...`);
+            }, 300);
+        }
+
+        function updateLatestUpdate(msg) {
+            const now = new Date();
+            document.getElementById("latestUpdate").textContent = 
+                `${now.toLocaleTimeString()} - ${msg}`;
+        }
+
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const health = await response.json();
+                document.getElementById("backendStatus").textContent = "●";
+                document.getElementById("backendStatus").style.color = health.components.pipeline ? "var(--accent)" : "var(--danger)";
+                document.getElementById("neoStatus").textContent = "●";
+                document.getElementById("neoStatus").style.color = health.components.neo4j_twin ? "var(--accent)" : "var(--warning)";
+                document.getElementById("agentStatus").textContent = "●";
+                document.getElementById("agentStatus").style.color = health.components.fault_agent ? "var(--accent)" : "var(--danger)";
+                document.getElementById("lastSync").textContent = new Date().toLocaleTimeString();
+            } catch (e) {
+                document.getElementById("backendStatus").style.color = "var(--danger)";
+            }
+        }
+
+        checkHealth();
+        setInterval(checkHealth, 5000);
+
+        let frameCount = 0;
+        let lastTime = Date.now();
+        function updateFPS() {
+            frameCount++;
+            const now = Date.now();
+            if (now - lastTime > 1000) {
+                document.getElementById("fpsCounter").textContent = `${frameCount} FPS`;
+                frameCount = 0;
+                lastTime = now;
+            }
+            requestAnimationFrame(updateFPS);
+        }
+        updateFPS();
+
+        addChatMessage("🚀 SLD OS initialized - Ready for commands");
+    </script>
+</body>
+</html>

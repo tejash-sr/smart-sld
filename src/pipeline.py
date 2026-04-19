@@ -18,7 +18,13 @@ from src.rule_engine.validator import RuleEngine
 class SLDPipeline:
     def __init__(self, model_path: str | None = None):
         self.preprocessor = SLDPreprocessor()
-        self.detector = SymbolDetector(model_path=model_path)
+        # Only use YOLO if explicitly provided AND model file exists
+        if model_path and Path(model_path).exists():
+            self.detector = SymbolDetector(model_path=model_path)
+            self.detector._ensure_loaded()
+        else:
+            # Use demo mode (no YOLO)
+            self.detector = SymbolDetector(model_path=None)
         self.ocr = TextExtractor()
         self.line_detector = LineDetector()
         self.rule_engine = RuleEngine()
@@ -32,7 +38,8 @@ class SLDPipeline:
 
     def process_image_array(self, raw: np.ndarray, source_filename: str | None = None) -> ExtractedSLD:
         t0 = time.time()
-        processed = self.preprocessor.preprocess(raw)
+        # For demo mode - skip preprocessing to keep image in color for visualization
+        processed = raw
         symbols = self.detector.detect(processed)
         text_results = self.ocr.extract_all_text(processed)
 
@@ -90,26 +97,43 @@ class SLDPipeline:
         return best
 
     def _connect_by_proximity(self, components: list[Component]) -> None:
-        TERMINALS = {
-            "circuit_breaker", "disconnect_switch", "load_break_switch",
-            "feeder_terminal", "transformer_2w", "transformer_3w"
-        }
+        """Connect components that are sufficiently close."""
         seen: set = set()
+        
+        # For each pair of components, check distance
         for i, a in enumerate(components):
-            if a.component_type.value not in TERMINALS:
+            if not a.position:
                 continue
-            if not a.bbox:
-                continue
-            ax = (a.bbox.x_min + a.bbox.x_max) / 2
-            ay = (a.bbox.y_min + a.bbox.y_max) / 2
             for j, b in enumerate(components):
-                if i <= j or not b.bbox:
+                if i >= j or not b.position:
                     continue
-                bx = (b.bbox.x_min + b.bbox.x_max) / 2
-                by = (b.bbox.y_min + b.bbox.y_max) / 2
-                dist = ((ax - bx) ** 2 + (ay - by) ** 2) ** 0.5
-                if dist < 150:
+                    
+                # Calculate distance between component centers
+                dist = ((a.position.x - b.position.x) ** 2 + (a.position.y - b.position.y) ** 2) ** 0.5
+                
+                # Connect if reasonably close (generous threshold for demo)
+                if dist < 300:
                     key = tuple(sorted([a.id, b.id]))
                     if key not in seen:
                         seen.add(key)
                         self._graph_builder.add_connection(a.id, b.id, ConnectionType.DIRECT)
+        
+        # Ensure at least some connections in demo mode
+        if len(seen) == 0 and len(components) > 1:
+            # Fallback: connect each component to its nearest neighbor
+            for i, a in enumerate(components):
+                if not a.position:
+                    continue
+                min_dist = float('inf')
+                nearest_j = -1
+                for j, b in enumerate(components):
+                    if i != j and b.position:
+                        dist = ((a.position.x - b.position.x) ** 2 + (a.position.y - b.position.y) ** 2) ** 0.5
+                        if dist < min_dist:
+                            min_dist = dist
+                            nearest_j = j
+                if nearest_j >= 0:
+                    key = tuple(sorted([a.id, components[nearest_j].id]))
+                    if key not in seen:
+                        seen.add(key)
+                        self._graph_builder.add_connection(a.id, components[nearest_j].id, ConnectionType.DIRECT)

@@ -1,0 +1,36 @@
+{
+  "report_timestamp": "2026-04-17T10:22:01.389618",
+  "total_predictions": 2,
+  "critical_count": 0,
+  "high_count": 0,
+  "predictions": [
+    {
+      "device_id": "T1",
+      "device_type": "TRANSFORMER",
+      "risk_score": 2.9161082336795516,
+      "severity": "LOW",
+      "failure_probability": 0.041542801067466655,
+      "predicted_failure_date": "2027-04-17T10:22:01.387491",
+      "contributing_factors": [
+        "High temperature: 81.5\u00b0C"
+      ],
+      "recommended_actions": [
+        "Continue routine monitoring"
+      ],
+      "confidence_level": 1.0
+    },
+    {
+      "device_id": "T2",
+      "device_type": "TRANSFORMER",
+      "risk_score": 0.0,
+      "severity": "LOW",
+      "failure_probability": 0.03445669220448596,
+      "predicted_failure_date": "2027-04-17T10:22:01.387810",
+      "contributing_factors": [],
+      "recommended_actions": [
+        "Continue routine monitoring"
+      ],
+      "confidence_level": 1.0
+    }
+  ]
+}

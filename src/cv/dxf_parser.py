@@ -2,7 +2,7 @@
 from __future__ import annotations
 import math
 from dataclasses import dataclass, field
-from ezdxf import readfile, readbytes
+from ezdxf import readfile
 from ezdxf.document import Drawing
 from ezdxf.enums import TextEntityAlignment
 from src.models.sld_schema import Component, ComponentType, Point, BoundingBox

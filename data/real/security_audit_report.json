@@ -1,0 +1,79 @@
+{
+  "report_timestamp": "2026-04-17T10:23:39.300293",
+  "overall_threat_score": "75.0/100",
+  "security_status": "\ud83d\udd34 CRITICAL",
+  "total_vulnerabilities": 8,
+  "critical_findings": 8,
+  "warning_findings": 0,
+  "findings_by_framework": {
+    "NERC_CIP": 8,
+    "IEC_62443": 0,
+    "ISA_95": 8
+  },
+  "top_5_risks": [
+    {
+      "vulnerability_id": "NO_AUTH_SOURCES_S1",
+      "threat_level": "CRITICAL",
+      "component": "S1",
+      "description": "Device configuration changes not restricted to authorized operators",
+      "remediation": "Implement mandatory operator authentication for device 'S1'",
+      "cvss_score": 7.5,
+      "compliance_impact": [
+        "NERC_CIP",
+        "ISA_95"
+      ]
+    },
+    {
+      "vulnerability_id": "NO_AUTH_SOURCES_S2",
+      "threat_level": "CRITICAL",
+      "component": "S2",
+      "description": "Device configuration changes not restricted to authorized operators",
+      "remediation": "Implement mandatory operator authentication for device 'S2'",
+      "cvss_score": 7.5,
+      "compliance_impact": [
+        "NERC_CIP",
+        "ISA_95"
+      ]
+    },
+    {
+      "vulnerability_id": "NO_AUTH_TRANSFORMERS_T1",
+      "threat_level": "CRITICAL",
+      "component": "T1",
+      "description": "Device configuration changes not restricted to authorized operators",
+      "remediation": "Implement mandatory operator authentication for device 'T1'",
+      "cvss_score": 7.5,
+      "compliance_impact": [
+        "NERC_CIP",
+        "ISA_95"
+      ]
+    },
+    {
+      "vulnerability_id": "NO_AUTH_TRANSFORMERS_T2",
+      "threat_level": "CRITICAL",
+      "component": "T2",
+      "description": "Device configuration changes not restricted to authorized operators",
+      "remediation": "Implement mandatory operator authentication for device 'T2'",
+      "cvss_score": 7.5,
+      "compliance_impact": [
+        "NERC_CIP",
+        "ISA_95"
+      ]
+    },
+    {
+      "vulnerability_id": "NO_AUTH_BUSES_B1",
+      "threat_level": "CRITICAL",
+      "component": "B1",
+      "description": "Device configuration changes not restricted to authorized operators",
+      "remediation": "Implement mandatory operator authentication for device 'B1'",
+      "cvss_score": 7.5,
+      "compliance_impact": [
+        "NERC_CIP",
+        "ISA_95"
+      ]
+    }
+  ],
+  "compliance_summary": {
+    "NERC_CIP": "NON-COMPLIANT",
+    "IEC_62443": "NON-COMPLIANT"
+  }
+}

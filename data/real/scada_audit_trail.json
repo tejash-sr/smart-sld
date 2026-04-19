@@ -1,0 +1,45 @@
+{
+  "audit_timestamp": "2026-04-17T10:21:53.193652",
+  "total_commands": 2,
+  "executed_commands": 1,
+  "rejected_commands": 1,
+  "failed_commands": 0,
+  "commands_by_risk_level": {
+    "LOW": 1,
+    "MEDIUM": 1,
+    "HIGH": 0,
+    "CRITICAL": 0
+  },
+  "commands_by_type": {
+    "SWITCH_CLOSE": 1,
+    "LOAD_SHED": 0
+  },
+  "command_details": [
+    {
+      "command_id": "CMD001",
+      "command_type": "SWITCH_CLOSE",
+      "target_device": "B1",
+      "parameters": {
+        "duration": 5
+      },
+      "timestamp": "2026-04-17T10:21:53.191668",
+      "operator_id": "OPERATOR_KUB",
+      "risk_level": "LOW",
+      "status": "EXECUTED",
+      "execution_result": "Switch B1 closed successfully"
+    },
+    {
+      "command_id": "CMD002",
+      "command_type": "LOAD_SHED",
+      "target_device": "F1",
+      "parameters": {
+        "load_to_shed": 50
+      },
+      "timestamp": "2026-04-17T10:21:53.191700",
+      "operator_id": "OPERATOR_KUB",
+      "risk_level": "MEDIUM",
+      "status": "REJECTED",
+      "execution_result": "Load shedding exceeds 30% safety threshold"
+    }
+  ]
+}

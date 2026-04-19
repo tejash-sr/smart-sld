@@ -25,3 +25,6 @@ tmp/
 .env.*.local
 *.key
 *.pem
+
+# Documentation (organized in docs folder, not for version control)
+docs/

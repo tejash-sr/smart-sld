@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLD OS - Enterprise Grid Intelligence Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e40af;
+            --secondary: #0891b2;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-darker: #0a0e27;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: #475569;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 380px;
+            grid-template-rows: 70px 1fr 50px;
+            height: 100vh;
+            gap: 0;
+            background: var(--bg-dark);
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-bottom: 2px solid var(--accent);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: white;
+            flex: 1;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            font-size: 12px;
+            color: white;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.active {
+            background: var(--success);
+        }
+
+        .status-dot.inactive {
+            background: var(--danger);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-column: 1;
+            grid-row: 2;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        input[type="file"],
+        input[type="text"],
+        select,
+        textarea {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: var(--secondary);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.4);
+        }
+
+        button.primary:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        button.secondary:hover {
+            background: var(--border);
+        }
+
+        button.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        button.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-column: 2;
+            grid-row: 2;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .visualization-canvas {
+            width: 100%;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: rgba(6, 182, 212, 0.05);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Right Sidebar */
+        .right-sidebar {
+            grid-column: 3;
+            grid-row: 2;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .log-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-item.success {
+            border-left-color: var(--success);
+            color: var(--success);
+        }
+
+        .log-item.error {
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .log-item.warning {
+            border-left-color: var(--warning);
+            color: var(--warning);
+        }
+
+        /* Footer */
+        .footer {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .modal-message {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        @media (max-width: 1400px) {
+            .app-container {
+                grid-template-columns: 240px 1fr 300px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 70px 1fr 50px;
+            }
+
+            .sidebar, .right-sidebar {
+                display: none;
+            }
+
+            .content-section {
+                grid-column: 1 / -1;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            border-left: 4px solid;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .alert.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .alert.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left-color: var(--warning);
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>⚡ SLD OS</h1>
+                <div class="header-subtitle">Enterprise Grid Intelligence Platform</div>
+            </div>
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-dot active"></div>
+                    <span>Backend</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot" id="neoStatus"></div>
+                    <span>Neo4j</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">📤 SLD Extraction</div>
+                <div class="control-group">
+                    <label>Upload SLD Image</label>
+                    <input type="file" id="sldFile" accept="image/*">
+                    <button class="primary" onclick="extractSLD()">
+                        <span>🔍</span> Extract Components
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">🔄 Topology Comparison</div>
+                <div class="control-group">
+                    <label>Original SLD</label>
+                    <input type="file" id="oldSLD" accept="image/*">
+                    <label>Modified SLD</label>
+                    <input type="file" id="newSLD" accept="image/*">
+                    <button class="primary" onclick="compareSLDs()">
+                        <span>📊</span> Compare & Diff
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">⚡ Fault Analysis</div>
+                <div class="control-group">
+                    <label>Component ID</label>
+                    <input type="text" id="faultLocation" placeholder="e.g. BUS-1, XFMR-2">
+                    <label>Isolation Strategy</label>
+                    <select id="isolationStrategy">
+                        <option value="optimal">Optimal (Minimize Impact)</option>
+                        <option value="conservative">Conservative (Safe)</option>
+                        <option value="aggressive">Aggressive (Fast)</option>
+                    </select>
+                    <button class="primary" onclick="analyzeFault()">
+                        <span>⚡</span> Run Analysis
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">📦 Batch Operations</div>
+                <button class="secondary" onclick="runBatch()">
+                    <span>🔄</span> Process Batch
+                </button>
+                <button class="secondary" onclick="showAnomalies()">
+                    <span>⚠️</span> Detect Anomalies
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-section">
+                <div class="section-title">📊 Topology Visualization</div>
+                <canvas id="canvas" class="visualization-canvas"></canvas>
+                <div id="analysisResult" style="margin-top: 16px;"></div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="right-sidebar">
+            <div class="panel">
+                <div class="panel-title">📈 Statistics</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="compCount">0</div>
+                        <div class="stat-label">Components</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="connCount">0</div>
+                        <div class="stat-label">Connections</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="voltCount">0</div>
+                        <div class="stat-label">Voltages</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">📋 Activity Log</div>
+                <div id="logContainer" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-item">v1.0.0</div>
+            <div class="footer-item">•</div>
+            <div class="footer-item" id="lastUpdate">Ready</div>
+            <div class="footer-item" style="margin-left: auto;">Powered by FastAPI + Neo4j</div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">Message</div>
+            <div class="modal-message" id="modalMessage"></div>
+            <div class="modal-buttons">
+                <button class="secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:8000/api/v1";
+        let currentData = null;
+
+        const log = (message, type = "info") => {
+            const container = document.getElementById("logContainer");
+            const item = document.createElement("div");
+            item.className = `log-item ${type}`;
+            item.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.insertBefore(item, container.firstChild);
+            if (container.children.length > 10) container.removeChild(container.lastChild);
+        };
+
+        const showModal = (title, message) => {
+            document.getElementById("modalTitle").textContent = title;
+            document.getElementById("modalMessage").textContent = message;
+            document.getElementById("modal").classList.add("active");
+        };
+
+        const closeModal = () => {
+            document.getElementById("modal").classList.remove("active");
+        };
+
+        const extractSLD = async () => {
+            const file = document.getElementById("sldFile").files[0];
+            if (!file) {
+                showModal("Error", "Please select an SLD image");
+                log("No file selected", "error");
+                return;
+            }
+
+            log("Extracting SLD...", "info");
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch(`${API_BASE}/interpret`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                currentData = data.data || data;
+
+                document.getElementById("compCount").textContent = currentData.components?.length || 0;
+                document.getElementById("connCount").textContent = currentData.connections?.length || 0;
+                document.getElementById("voltCount").textContent = (currentData.voltage_levels?.length || 0);
+
+                log(`✅ Extracted ${currentData.components?.length || 0} components`, "success");
+                updateVisualization();
+
+            } catch (error) {
+                log(`Error: ${error.message}`, "error");
+                showModal("Extraction Failed", `${error.message}\n\nMake sure backend is running.`);
+            }
+        };
+
+        const compareSLDs = async () => {
+            const oldFile = document.getElementById("oldSLD").files[0];
+            const newFile = document.getElementById("newSLD").files[0];
+
+            if (!oldFile || !newFile) {
+                showModal("Error", "Please select both original and modified SLDs");
+                return;
+            }
+
+            log("Comparing SLDs...", "info");
+
+            const formData = new FormData();
+            formData.append("old_sld_file", oldFile);
+            formData.append("new_sld_file", newFile);
+
+            try {
+                const response = await fetch(`${API_BASE}/compare-sld`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                const diff = data.data || data;
+
+                const result = document.getElementById("analysisResult");
+                result.innerHTML = `
+                    <div class="alert success">
+                        <strong>Comparison Complete</strong><br>
+                        Added: ${diff.statistics?.components_added || 0} | 
+                        Removed: ${diff.statistics?.components_removed || 0} | 
+                        Modified: ${diff.statistics?.components_modified || 0}
+                    </div>
+                `;
+
+                log(`✅ Found ${diff.statistics?.components_added || 0} additions`, "success");
+
+            } catch (error) {
+                log(`Error: ${error.message}`, "error");
+            }
+        };
+
+        const analyzeFault = async () => {
+            const location = document.getElementById("faultLocation").value;
+            const strategy = document.getElementById("isolationStrategy").value;
+
+            if (!location) {
+                showModal("Error", "Please enter a component ID");
+                return;
+            }
+
+            log(`Analyzing fault at ${location}...`, "info");
+
+            try {
+                const response = await fetch(`${API_BASE}/fault-analysis`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        fault_location: location,
+                        strategy: strategy
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                const analysis = data.data || data;
+
+                const result = document.getElementById("analysisResult");
+                result.innerHTML = `
+                    <div class="alert success">
+                        <strong>Fault Analysis Complete</strong><br>
+                        Affected: ${analysis.propagation_trace?.total_affected || 0} areas<br>
+                        Isolation Points: ${analysis.isolation_points?.length || 0}<br>
+                        Est. Restoration: ${analysis.restoration_estimate?.estimated_time_minutes || 'N/A'} min
+                    </div>
+                `;
+
+                log(`✅ ${analysis.propagation_trace?.total_affected || 0} components affected`, "success");
+
+            } catch (error) {
+                log(`Error: ${error.message}`, "error");
+            }
+        };
+
+        const runBatch = async () => {
+            log("Running batch process...", "info");
+
+            try {
+                const response = await fetch(`${API_BASE}/batch-ingest`, {
+                    method: "POST"
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                log(`✅ Processed ${data.slds_processed || 0} SLDs`, "success");
+
+            } catch (error) {
+                log(`Error: ${error.message}`, "error");
+            }
+        };
+
+        const showAnomalies = async () => {
+            log("Detecting anomalies...", "info");
+
+            try {
+                const response = await fetch(`${API_BASE}/anomalies`);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                const anomalies = data.anomalies || [];
+
+                const result = document.getElementById("analysisResult");
+                if (anomalies.length === 0) {
+                    result.innerHTML = '<div class="alert success">✅ No anomalies detected</div>';
+                } else {
+                    result.innerHTML = `
+                        <div class="alert warning">
+                            <strong>⚠️ Anomalies Detected:</strong><br>
+                            ${anomalies.map(a => `• ${a.type}: ${a.description}`).join('<br>')}
+                        </div>
+                    `;
+                }
+
+                log(`✅ ${anomalies.length} anomalies found`, "success");
+
+            } catch (error) {
+                log(`Error: ${error.message}`, "error");
+            }
+        };
+
+        const updateVisualization = () => {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // Clear background
+            ctx.fillStyle = "#0a0e27";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (!currentData?.components || currentData.components.length === 0) {
+                ctx.fillStyle = "#94a3b8";
+                ctx.font = "16px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("No components extracted", canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            // Find bounds to scale components
+            const coords = currentData.components.map(c => [c.x || 0, c.y || 0]);
+            const minX = Math.min(...coords.map(c => c[0]));
+            const maxX = Math.max(...coords.map(c => c[0]));
+            const minY = Math.min(...coords.map(c => c[1]));
+            const maxY = Math.max(...coords.map(c => c[1]));
+
+            const padding = 60;
+            const scaleX = (canvas.width - 2 * padding) / (maxX - minX || 1);
+            const scaleY = (canvas.height - 2 * padding) / (maxY - minY || 1);
+
+            // Draw grid background
+            ctx.strokeStyle = "rgba(71, 85, 105, 0.1)";
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Draw connections FIRST (so they appear behind components)
+            if (currentData?.connections && currentData.connections.length > 0) {
+                ctx.strokeStyle = "#06b6d4";
+                ctx.lineWidth = 3;
+                currentData.connections.forEach(conn => {
+                    const fromComp = currentData.components.find(c => c.id === conn.from);
+                    const toComp = currentData.components.find(c => c.id === conn.to);
+                    if (fromComp && toComp) {
+                        const x1 = padding + (fromComp.x - minX) * scaleX;
+                        const y1 = padding + (fromComp.y - minY) * scaleY;
+                        const x2 = padding + (toComp.x - minX) * scaleX;
+                        const y2 = padding + (toComp.y - minY) * scaleY;
+                        
+                        // Draw connection line
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                        
+                        // Draw connecting dots at midpoint
+                        const mx = (x1 + x2) / 2;
+                        const my = (y1 + y2) / 2;
+                        ctx.fillStyle = "rgba(6, 182, 212, 0.5)";
+                        ctx.beginPath();
+                        ctx.arc(mx, my, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+            }
+
+            // Draw components
+            const typeColors = {
+                "circuit_breaker": "#ef4444",
+                "transformer_2w": "#f59e0b",
+                "busbar": "#10b981",
+                "feeder_terminal": "#3b82f6",
+                "disconnect_switch": "#8b5cf6",
+                "ground": "#ec4899",
+                "current_transformer": "#06b6d4",
+                "voltage_transformer": "#14b8a6",
+                "reactor": "#f43f5e",
+                "capacitor": "#a855f7",
+                "generator": "#eab308",
+                "surge_arrester": "#8b5cf6"
+            };
+
+            currentData.components.forEach((comp, idx) => {
+                const x = padding + (comp.x - minX) * scaleX;
+                const y = padding + (comp.y - minY) * scaleY;
+                const size = 20;
+                const color = typeColors[comp.type] || "#06b6d4";
+
+                // Draw component box with border
+                ctx.fillStyle = color;
+                ctx.fillRect(x - size, y - size, size * 2, size * 2);
+                
+                // Border
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x - size, y - size, size * 2, size * 2);
+
+                // Type indicator letter in center
+                ctx.fillStyle = "white";
+                ctx.font = "bold 14px sans-serif";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                const letter = (comp.type || "?")[0].toUpperCase();
+                ctx.fillText(letter, x, y);
+
+                // Confidence badge below
+                if (comp.confidence !== undefined) {
+                    const conf = Math.round(comp.confidence * 100);
+                    ctx.fillStyle = conf > 80 ? "#10b981" : conf > 60 ? "#f59e0b" : "#ef4444";
+                    ctx.font = "10px sans-serif";
+                    ctx.fillText(conf + "%", x, y + size + 15);
+                }
+
+                // Label below confidence
+                ctx.fillStyle = "#cbd5e1";
+                ctx.font = "9px sans-serif";
+                const shortLabel = (comp.label || "").substring(0, 12);
+                ctx.fillText(shortLabel, x, y + size + 28);
+            });
+
+            // Draw legend
+            const legendX = 15;
+            const legendY = 15;
+            ctx.fillStyle = "rgba(30, 41, 59, 0.95)";
+            ctx.fillRect(legendX, legendY, 280, 140);
+            ctx.strokeStyle = "#06b6d4";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(legendX, legendY, 280, 140);
+
+            // Legend title
+            ctx.fillStyle = "#06b6d4";
+            ctx.font = "bold 14px sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText("🔌 SLD Extraction Results", legendX + 12, legendY + 25);
+
+            // Stats
+            ctx.fillStyle = "#cbd5e1";
+            ctx.font = "12px sans-serif";
+            ctx.fillText(`Components: ${currentData.components.length}`, legendX + 12, legendY + 50);
+            ctx.fillText(`Connections: ${currentData.connections?.length || 0}`, legendX + 12, legendY + 70);
+            ctx.fillText(`Voltages: ${currentData.voltage_levels?.length || 0}`, legendX + 12, legendY + 90);
+            ctx.fillText(`Time: ${(currentData.processing_time_ms || 0)}ms`, legendX + 12, legendY + 110);
+
+            // Status indicator
+            ctx.fillStyle = "#10b981";
+            ctx.beginPath();
+            ctx.arc(legendX + 268, legendY + 8, 6, 0, Math.PI * 2);
+            ctx.fill();
+        };
+
+        // Check backend health
+        const checkHealth = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    document.getElementById("neoStatus").classList.add("active");
+                    document.getElementById("lastUpdate").textContent = "Connected";
+                } else {
+                    document.getElementById("neoStatus").classList.add("inactive");
+                }
+            } catch {
+                document.getElementById("neoStatus").classList.add("inactive");
+            }
+        };
+
+        checkHealth();
+        setInterval(checkHealth, 5000);
+
+        log("SLD OS loaded successfully", "success");
+    </script>
+</body>
+</html>
